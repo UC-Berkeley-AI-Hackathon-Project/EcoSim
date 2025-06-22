@@ -1,0 +1,9 @@
+# FastAPI and Server
+fastapi
+uvicorn[standard]
+
+# Pydantic is used for data validation
+pydantic
+
+# Add other dependencies here as needed
+# e.g., google-generativeai, python-dotenv 
