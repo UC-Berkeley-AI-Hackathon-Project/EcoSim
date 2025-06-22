@@ -10,17 +10,22 @@ Quick setup guide for the PolicyPulse frontend.
 
 ### Run the App
 
-1. **Install dependencies:**
+1. **Navigate to the project directory:**
+   ```bash
+   cd ecosimclient
+   ```
+
+2. **Install dependencies:**
    ```bash
    npm install
    ```
 
-2. **Start development server:**
+3. **Start development server:**
    ```bash
    npm run dev
    ```
 
-3. **Open browser:**
+4. **Open browser:**
    Navigate to `http://localhost:5173`
 
 ## 🛠️ Available Commands
@@ -38,4 +43,4 @@ Quick setup guide for the PolicyPulse frontend.
 
 ---
 
-**That's it! Happy coding! 🚀**
+**That's it! Happy coding! 🚀** 
