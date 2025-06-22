@@ -127,7 +127,7 @@ export default function DebateArenaPage({ prompt, onBack }: DebateArenaPageProps
     fetchDebate();
   }, [prompt]);
 
-  // Simulate streaming text once data is fetched
+  // Stream text immediately once data is fetched
   useEffect(() => {
     if (loading || error || !agentResponses.agentA) return;
 
@@ -141,7 +141,7 @@ export default function DebateArenaPage({ prompt, onBack }: DebateArenaPageProps
           clearInterval(interval)
           onComplete()
         }
-      }, 20)
+      }, 5) // Much faster streaming - 5ms per character
       return interval
     }
 
@@ -154,9 +154,10 @@ export default function DebateArenaPage({ prompt, onBack }: DebateArenaPageProps
     }
   }, [loading, error, agentResponses])
 
+  // Show voting immediately when both streams complete
   useEffect(() => {
     if (!streamingA && !streamingB) {
-      setTimeout(() => setShowVoting(true), 1000)
+      setShowVoting(true)
     }
   }, [streamingA, streamingB])
 
