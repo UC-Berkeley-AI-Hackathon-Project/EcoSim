@@ -5,5 +5,9 @@ uvicorn[standard]
 # Pydantic is used for data validation
 pydantic
 
+# Google Generative AI for Gemini
+google-generativeai
+python-dotenv
+
 # Add other dependencies here as needed
 # e.g., google-generativeai, python-dotenv 
