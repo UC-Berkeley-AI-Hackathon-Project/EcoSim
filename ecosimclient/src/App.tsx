@@ -316,7 +316,7 @@ export default function PolicyPulse() {
                     <Mic className="h-7 w-7 text-purple-600 dark:text-purple-400" />
                   </div>
                   <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100 mb-2 text-center">AI Voices</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 text-center">Listen to AI agents debate with natural, high-quality voices powered by LMNT.</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 text-center">Listen to AI agents debate with natural, high-quality voices powered by VAPI.</p>
                 </div>
                 
                 <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-md dark:shadow-none">
@@ -330,8 +330,7 @@ export default function PolicyPulse() {
                 <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-md dark:shadow-none">
                   <div className="w-14 h-14 bg-gradient-to-br from-purple-100 to-orange-100 dark:from-purple-950 dark:to-orange-950 rounded-full flex items-center justify-center mb-4 mx-auto shadow-inner dark:shadow-none">
                     <div className="flex items-center gap-1">
-                      <Trophy className="h-4 w-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-orange-600" />
-                      <CheckCircle className="h-4 w-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-orange-600" />
+                      <Trophy className="h-4 w-4 text-purple-600 dark:text-purple-400" />
                     </div>
                   </div>
                   <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100 mb-2 text-center">Vote & Learn</h3>
@@ -412,7 +411,7 @@ export default function PolicyPulse() {
                     <div className="w-8 h-8 bg-purple-100 dark:bg-purple-950 rounded-full flex items-center justify-center text-purple-600 dark:text-purple-400 font-semibold text-sm">3</div>
                     <div>
                       <h3 className="font-semibold text-gray-900 dark:text-gray-100">Listen & Vote</h3>
-                      <p>Listen to the debate with natural AI voices powered by LMNT, then vote on which argument was more convincing.</p>
+                      <p>Listen to the debate with natural AI voices powered by VAPI, then vote on which argument was more convincing.</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">

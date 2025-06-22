@@ -560,6 +560,7 @@ export default function DebateArenaPage({ prompt, onBack }: DebateArenaPageProps
       // Reset voting state for new poll
       setShowVoting(false);
       setSelectedVote(null);
+      setHoverVote(null);
 
     } catch (err) {
       if (err instanceof Error) {

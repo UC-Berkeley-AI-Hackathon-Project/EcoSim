@@ -38,8 +38,10 @@ Quick setup guide for the PolicyPulse frontend.
 
 - ✅ Landing page with PolicyPulse branding
 - ✅ Policy input interface
-- ⏳ Backend integration (FastAPI) - Next step
-- ⏳ AI debate logic (Gemini + LMNT)
+- ✅ Backend integration (FastAPI)
+- ✅ AI debate logic (Gemini + VAPI)
+- ✅ Text-to-speech functionality
+- ✅ Voting and community features
 
 ---
 
