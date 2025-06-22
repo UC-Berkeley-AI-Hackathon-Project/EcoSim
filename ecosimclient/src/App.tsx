@@ -1,11 +1,32 @@
+import React, { useState } from "react"
 import { AppSidebar } from "@/components/app-sidebar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Mic, Trophy, ChevronDown, Play, MessageSquare, Users, Volume2 } from "lucide-react"
+import DebateArenaPage from "@/pages/DebateArena"
 
 export default function PolicyPulse() {
+  const [debateStarted, setDebateStarted] = useState(false);
+  const [prompt, setPrompt] = useState("");
+
+  const handleStartDebate = () => {
+    // In a real app, you'd probably want more validation
+    if (prompt.trim()) {
+      setDebateStarted(true);
+    }
+  };
+
+  const handleEndDebate = () => {
+    setDebateStarted(false);
+    setPrompt(""); // Optionally clear the prompt
+  };
+
+  if (debateStarted) {
+    return <DebateArenaPage prompt={prompt} onBack={handleEndDebate} />;
+  }
+  
   return (
     <SidebarProvider defaultOpen={false}>
       <AppSidebar />
@@ -92,6 +113,9 @@ export default function PolicyPulse() {
                   <Input
                     placeholder="Enter a policy or topic to debate (e.g., 'Should we have universal healthcare?')"
                     className="w-full h-16 text-lg px-6 pr-32 bg-white border-gray-300 rounded-xl shadow-sm"
+                    value={prompt}
+                    onChange={(e) => setPrompt(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleStartDebate()}
                   />
                   <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
                     <Button size="icon" variant="ghost" className="h-8 w-8">
@@ -99,7 +123,10 @@ export default function PolicyPulse() {
                     </Button>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button className="gap-2 h-10 bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700">
+                        <Button 
+                          className="gap-2 h-10 bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700"
+                          onClick={handleStartDebate}
+                        >
                           <Play className="h-4 w-4" />
                           Start Debate
                           <ChevronDown className="h-4 w-4" />
