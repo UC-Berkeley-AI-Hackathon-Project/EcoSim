@@ -10,47 +10,16 @@ import { ChevronDown, Plus, RotateCcw, Copy, Maximize2, ArrowLeft, ArrowRight, C
 import React from "react"
 import { cn } from "@/lib/utils"
 
-// Mock AI responses for the apple vs banana debate
-const mockResponses = {
-  assistantA: {
-    title: "Judge's Verdict: A Delicious Draw!",
-    content: `"After careful consideration of the eloquent arguments presented, it is clear that both the Apple and the Banana are champions in their own right!
-
-• For pure convenience, immediate energy, and potassium punch, the Banana is your go-to. It's the ultimate pre-workout snack, smoothie base, and gentle tummy soother.
-
-• For refreshing crispness, antioxidant variety, and versatility in cooking, the Apple reigns supreme. It's a delightful snack that keeps on giving with numerous culinary applications.
-
-Ultimately, the winner depends on your immediate needs, taste preferences, and what you're looking for in your fruit experience. Both are incredibly healthy, delicious, and deserving of a place in your diet.
-
-So, instead of choosing, why not have both? A banana for your morning smoothie, and a crisp apple for an afternoon snack!"`,
-  },
-  assistantB: {
-    title: "",
-    content: `**Environmental Impact:**
-• Monoculture plantations can lead to deforestation and biodiversity loss.
-• Often treated with pesticides, raising concerns about environmental and health impacts.
-
-**Closing Statements**
-
-**Pro-Apples:** In conclusion, apples offer a balanced combination of nutrition, versatility, and environmental benefits. Their ability to be incorporated into a wide range of dishes and their lower environmental impact make them a superior choice.
-
-**Pro-Bananas:** Ultimately, bananas win the debate due to their unparalleled convenience, high energy content, and essential nutrients. Their ease of consumption and portability make them an ideal fruit for modern, fast-paced lifestyles.
-
-**Final Verdict**
-
-Both fruits have their unique advantages and can be part of a healthy diet. The "better" fruit depends on individual preferences, dietary needs, and lifestyle considerations.`,
-  },
-}
-
 interface AssistantPanelProps {
   title: string;
   content: string;
   streaming: boolean;
   showQuestion: boolean;
+  isLoading: boolean;
 }
 
-const AssistantPanel: React.FC<AssistantPanelProps> = ({ title, content, streaming, showQuestion }) => (
-  <Card className="bg-black border border-blue-500/20 rounded-xl p-6 flex flex-col shadow-lg shadow-blue-500/5">
+const AssistantPanel: React.FC<AssistantPanelProps> = ({ title, content, streaming, showQuestion, isLoading }) => (
+  <Card className="bg-black border border-blue-500/20 rounded-xl p-6 flex flex-col shadow-lg shadow-blue-500/5 min-h-[300px]">
       <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-white flex items-center gap-2">
             <Bot className="text-blue-400" />
@@ -66,14 +35,20 @@ const AssistantPanel: React.FC<AssistantPanelProps> = ({ title, content, streami
           </div>
       </div>
       <div className="flex-grow space-y-4 text-zinc-300 font-light prose prose-invert prose-p:text-zinc-300 prose-strong:text-white leading-relaxed">
-          <div className="whitespace-pre-wrap">
-              {content}
-              {streaming && <span className="animate-pulse">▌</span>}
-          </div>
+          {isLoading ? (
+            <div className="flex items-center justify-center h-full">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400"></div>
+            </div>
+          ) : (
+            <div className="whitespace-pre-wrap">
+                {content}
+                {streaming && <span className="animate-pulse">▌</span>}
+            </div>
+          )}
       </div>
       {showQuestion && (
           <div className="mt-6 text-sm text-zinc-500 border-t border-zinc-800 pt-4">
-              What's your pick, and why? Are you Team Apple or Team Banana?
+              What's your pick, and why?
           </div>
       )}
   </Card>
@@ -106,6 +81,10 @@ interface DebateArenaPageProps {
 }
 
 export default function DebateArenaPage({ prompt, onBack }: DebateArenaPageProps) {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [agentResponses, setAgentResponses] = useState({ agentA: '', agentB: '' });
+
   const [streamingA, setStreamingA] = useState(true)
   const [streamingB, setStreamingB] = useState(true)
   const [displayedA, setDisplayedA] = useState("")
@@ -113,8 +92,45 @@ export default function DebateArenaPage({ prompt, onBack }: DebateArenaPageProps
   const [selectedVote, setSelectedVote] = useState<string | null>(null)
   const [showVoting, setShowVoting] = useState(false)
 
-  // Simulate streaming text
+  // Fetch debate arguments from the backend
   useEffect(() => {
+    const fetchDebate = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetch("http://localhost:8000/api/debate", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ prompt }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`API Error: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        setAgentResponses({ agentA: data.agent_a_response, agentB: data.agent_b_response });
+
+      } catch (err) {
+        if (err instanceof Error) {
+            setError(err.message);
+        } else {
+            setError("An unknown error occurred.");
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDebate();
+  }, [prompt]);
+
+  // Simulate streaming text once data is fetched
+  useEffect(() => {
+    if (loading || error || !agentResponses.agentA) return;
+
     const streamText = (text: string, setter: (text: string) => void, onComplete: () => void) => {
       let index = 0
       const interval = setInterval(() => {
@@ -129,14 +145,14 @@ export default function DebateArenaPage({ prompt, onBack }: DebateArenaPageProps
       return interval
     }
 
-    const intervalA = streamText(mockResponses.assistantA.content, setDisplayedA, () => setStreamingA(false))
-    const intervalB = streamText(mockResponses.assistantB.content, setDisplayedB, () => setStreamingB(false))
+    const intervalA = streamText(agentResponses.agentA, setDisplayedA, () => setStreamingA(false))
+    const intervalB = streamText(agentResponses.agentB, setDisplayedB, () => setStreamingB(false))
 
     return () => {
       clearInterval(intervalA)
       clearInterval(intervalB)
     }
-  }, [])
+  }, [loading, error, agentResponses])
 
   useEffect(() => {
     if (!streamingA && !streamingB) {
@@ -170,9 +186,15 @@ export default function DebateArenaPage({ prompt, onBack }: DebateArenaPageProps
       </header>
 
       <main className="flex-1 w-full max-w-7xl mx-auto p-8">
+        {error && (
+            <div className="bg-red-900/50 border border-red-500/30 text-red-300 p-4 rounded-lg text-center">
+                <p><strong>Error:</strong> {error}</p>
+                <p className="text-sm mt-2">Please ensure the backend server is running and accessible.</p>
+            </div>
+        )}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <AssistantPanel title="Agent Alpha" content={displayedA} streaming={streamingA} showQuestion={!streamingA && !streamingB}/>
-          <AssistantPanel title="Agent Beta" content={displayedB} streaming={streamingB} showQuestion={false}/>
+          <AssistantPanel title="Agent Alpha (Pro)" content={displayedA} streaming={streamingA} showQuestion={!streamingA && !streamingB && !error} isLoading={loading} />
+          <AssistantPanel title="Agent Beta (Con)" content={displayedB} streaming={streamingB} showQuestion={false} isLoading={loading} />
         </div>
       </main>
 

@@ -5,6 +5,7 @@ import os
 import google.generativeai as genai
 import asyncio
 from dotenv import load_dotenv
+from fastapi.middleware.cors import CORSMiddleware
 
 # --- Environment and API Key Setup ---
 load_dotenv()
@@ -22,6 +23,20 @@ app = FastAPI(
     description="API for the PolicyPulse AI Debate Arena.",
     version="0.1.0",
 )
+
+# --- CORS Middleware ---
+# This allows the frontend (running on a different port) to communicate with this backend.
+# Using a wildcard (*) is okay for development but should be restricted in production.
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 # --- Pydantic Models ---
 # These models define the shape of the data for your API requests.
@@ -69,13 +84,13 @@ generation_config = {
 
 # Create two separate model instances with their respective system prompts
 agent_a_model = genai.GenerativeModel(
-    model_name="gemini-1.0-pro",
+    model_name="gemini-2.5-pro",
     generation_config=generation_config,
     system_instruction=AGENT_A_SYSTEM_PROMPT
 )
 
 agent_b_model = genai.GenerativeModel(
-    model_name="gemini-1.0-pro",
+    model_name="gemini-2.5-pro",
     generation_config=generation_config,
     system_instruction=AGENT_B_SYSTEM_PROMPT
 )
