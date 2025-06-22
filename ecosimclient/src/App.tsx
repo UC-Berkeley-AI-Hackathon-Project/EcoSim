@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Mic, Trophy, ChevronDown, Play, MessageSquare, Users, Volume2, Moon, Sun, X, Info, ExternalLink } from "lucide-react";
+import { Mic, Trophy, ChevronDown, Play, MessageSquare, Users, Volume2, Moon, Sun, X, Info, ExternalLink, Vote, CheckCircle } from "lucide-react";
 import DebateArenaPage from "@/pages/DebateArena";
 
 // Add type declarations for speech recognition
@@ -194,7 +194,7 @@ export default function PolicyPulse() {
               <div className="space-y-4">
                 <div className="flex items-center justify-center gap-3 text-2xl font-semibold">
                   <div className="flex items-center gap-2">
-                    <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                    <div className="w-9 h-9 bg-gradient-to-br from-purple-500 to-orange-500 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg">
                       P
                     </div>
                     <span className="text-gray-900 dark:text-gray-100">PolicyPulse</span>
@@ -202,7 +202,7 @@ export default function PolicyPulse() {
                 </div>
 
                 <h1 className="text-4xl md:text-6xl font-extrabold text-gray-900 dark:text-gray-100 leading-tight">
-                  The <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-700">AI Policy Debate Arena</span>
+                  The <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-orange-500">AI Policy Debate Arena</span>
                 </h1>
 
                 <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed">
@@ -244,7 +244,7 @@ export default function PolicyPulse() {
                 <div className="relative">
                   <Input
                     placeholder="Enter a policy or topic to debate (e.g., 'Should we have universal healthcare?')"
-                    className="w-full h-16 text-lg px-6 pr-32 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 rounded-xl shadow-md dark:shadow-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    className="w-full h-16 text-lg px-6 pr-32 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 rounded-xl shadow-md dark:shadow-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleStartDebate()}
@@ -260,7 +260,7 @@ export default function PolicyPulse() {
                       <Volume2 className={`h-4 w-4 ${isListening ? 'text-red-600 dark:text-red-400' : ''}`} />
                     </Button>
                     <Button 
-                      className="gap-2 h-10 px-5 bg-gradient-to-r from-blue-600 to-indigo-700 text-white hover:from-blue-700 hover:to-indigo-800 rounded-lg shadow-md"
+                      className="gap-2 h-10 px-5 bg-gradient-to-r from-purple-500 to-orange-500 text-white hover:from-purple-600 hover:to-orange-600 rounded-lg shadow-md"
                       onClick={handleStartDebate}
                     >
                       <Play className="h-4 w-4" />
@@ -312,24 +312,27 @@ export default function PolicyPulse() {
               {/* Features Preview */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
                 <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-md dark:shadow-none">
-                  <div className="w-14 h-14 bg-blue-100 dark:bg-blue-950 rounded-full flex items-center justify-center mb-4 mx-auto shadow-inner dark:shadow-none">
-                    <Mic className="h-7 w-7 text-blue-600 dark:text-blue-400" />
+                  <div className="w-14 h-14 bg-purple-100 dark:bg-purple-950 rounded-full flex items-center justify-center mb-4 mx-auto shadow-inner dark:shadow-none">
+                    <Mic className="h-7 w-7 text-purple-600 dark:text-purple-400" />
                   </div>
                   <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100 mb-2 text-center">AI Voices</h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400 text-center">Listen to AI agents debate with natural, high-quality voices powered by LMNT.</p>
                 </div>
                 
                 <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-md dark:shadow-none">
-                  <div className="w-14 h-14 bg-green-100 dark:bg-green-950 rounded-full flex items-center justify-center mb-4 mx-auto shadow-inner dark:shadow-none">
-                    <MessageSquare className="h-7 w-7 text-green-600 dark:text-green-400" />
+                  <div className="w-14 h-14 bg-orange-100 dark:bg-orange-950 rounded-full flex items-center justify-center mb-4 mx-auto shadow-inner dark:shadow-none">
+                    <MessageSquare className="h-7 w-7 text-orange-600 dark:text-orange-400" />
                   </div>
                   <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100 mb-2 text-center">Smart Arguments</h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400 text-center">Powered by Google Gemini, our AI agents generate compelling, fact-based arguments.</p>
                 </div>
                 
                 <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-md dark:shadow-none">
-                  <div className="w-14 h-14 bg-purple-100 dark:bg-purple-950 rounded-full flex items-center justify-center mb-4 mx-auto shadow-inner dark:shadow-none">
-                    <Trophy className="h-7 w-7 text-purple-600 dark:text-purple-400" />
+                  <div className="w-14 h-14 bg-gradient-to-br from-purple-100 to-orange-100 dark:from-purple-950 dark:to-orange-950 rounded-full flex items-center justify-center mb-4 mx-auto shadow-inner dark:shadow-none">
+                    <div className="flex items-center gap-1">
+                      <Trophy className="h-4 w-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-orange-600" />
+                      <CheckCircle className="h-4 w-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-orange-600" />
+                    </div>
                   </div>
                   <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100 mb-2 text-center">Vote & Learn</h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400 text-center">Vote on who made the better argument and see how others voted on similar topics.</p>
