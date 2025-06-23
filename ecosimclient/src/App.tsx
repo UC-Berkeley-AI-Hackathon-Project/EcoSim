@@ -206,8 +206,7 @@ export default function PolicyPulse() {
                 </h1>
 
                 <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed">
-                  Transform complex policies into engaging debates. Two AI agents argue different sides, <br className="hidden md:block" />
-                  helping you understand intricate issues from multiple perspectives.
+                  Transform complex policies into engaging debates. Two AI agents argue different sides, helping you understand intricate issues from multiple perspectives.
                 </p>
               </div>
 
@@ -232,7 +231,7 @@ export default function PolicyPulse() {
                 <Button 
                   variant="outline" 
                   className="gap-2 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg px-5 py-2"
-                  onClick={() => window.open('https://github.com/bradenstitt/EcoSim', '_blank')}
+                  onClick={() => window.open('hhttps://github.com/UC-Berkeley-AI-Hackathon-Project/EcoSim', '_blank')}
                 >
                   <Users className="h-4 w-4 text-purple-500" />
                   View on GitHub

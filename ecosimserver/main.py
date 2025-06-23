@@ -102,6 +102,7 @@ You are a knowledgeable and friendly AI. Your goal is to explain the positive si
 - Include 1-2 specific examples to support your arguments.
 - End with a compelling summary of why this policy/topic is beneficial.
 - Be concise and impactful - quality over quantity.
+- IMPORTANT: When you reference statistics, data, or facts, mention the source briefly (e.g., "According to recent studies..." or "Research shows..."). If you have access to specific sources through search, reference them naturally in your argument.
 """
 
 AGENT_B_SYSTEM_PROMPT = """
@@ -116,6 +117,7 @@ You are a thoughtful and friendly AI. Your goal is to explain the potential down
 - Include 1-2 specific examples to support your concerns.
 - End with a compelling summary of why this policy/topic might be problematic.
 - Be concise and impactful - quality over quantity.
+- IMPORTANT: When you reference statistics, data, or facts, mention the source briefly (e.g., "According to recent studies..." or "Research shows..."). If you have access to specific sources through search, reference them naturally in your argument.
 """
 
 # --- Google Search Tool Configuration ---

@@ -21,9 +21,11 @@ interface AssistantPanelProps {
   onTextToSpeech?: (text: string, agentName: string) => void;
   isAudioPlaying?: boolean;
   audioUrl?: string;
+  sources?: Array<{ title: string; uri: string }>;
+  searchQueries?: string[];
 }
 
-const AssistantPanel: React.FC<AssistantPanelProps> = ({ title, content, streaming, isLoading, isHighlighted, highlightType, onTextToSpeech, isAudioPlaying, audioUrl }) => {
+const AssistantPanel: React.FC<AssistantPanelProps> = ({ title, content, streaming, isLoading, isHighlighted, highlightType, onTextToSpeech, isAudioPlaying, audioUrl, sources, searchQueries }) => {
   const isProAdvocate = title === "Pro Advocate";
   
   return (
@@ -54,6 +56,11 @@ const AssistantPanel: React.FC<AssistantPanelProps> = ({ title, content, streami
                 )}
               </div>
               {title}
+              {(sources && sources.length > 0) && (
+                <span className="text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-full">
+                  🔍 Sources
+                </span>
+              )}
             </h3>
             <div className="flex gap-2"> {/* Increased gap */}
                 <Button 
@@ -88,6 +95,50 @@ const AssistantPanel: React.FC<AssistantPanelProps> = ({ title, content, streami
               </div>
             )}
         </div>
+        
+        {/* Sources and Search Queries */}
+        {(sources && sources.length > 0) || (searchQueries && searchQueries.length > 0) ? (
+          <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+            {searchQueries && searchQueries.length > 0 && (
+              <div className="mb-3">
+                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  Research Queries
+                </h4>
+                <div className="flex flex-wrap gap-1">
+                  {searchQueries.map((query, index) => (
+                    <span key={index} className="text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-full">
+                      {query}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {sources && sources.length > 0 && (
+              <div>
+                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  Sources Referenced
+                </h4>
+                <div className="space-y-2">
+                  {sources.map((source, index) => (
+                    <div key={index} className="text-xs">
+                      <a 
+                        href={source.uri} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-blue-600 dark:text-blue-400 hover:underline break-all"
+                      >
+                        {source.title || source.uri}
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        ) : null}
     </Card>
   );
 };
@@ -382,6 +433,12 @@ export default function DebateArenaPage({ prompt, onBack }: DebateArenaPageProps
   const [currentPlayingAgent, setCurrentPlayingAgent] = useState<string | null>(null);
   const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
 
+  // Sources and search queries
+  const [agentASources, setAgentASources] = useState<Array<{ title: string; uri: string }>>([]);
+  const [agentBSources, setAgentBSources] = useState<Array<{ title: string; uri: string }>>([]);
+  const [agentASearchQueries, setAgentASearchQueries] = useState<string[]>([]);
+  const [agentBSearchQueries, setAgentBSearchQueries] = useState<string[]>([]);
+
   useEffect(() => {
     const fetchDebate = async () => {
       setLoading(true);
@@ -401,6 +458,12 @@ export default function DebateArenaPage({ prompt, onBack }: DebateArenaPageProps
 
         const data = await response.json();
         setAgentResponses({ agentA: data.agent_a_response, agentB: data.agent_b_response });
+        
+        // Set sources and search queries
+        setAgentASources(data.agent_a_sources || []);
+        setAgentBSources(data.agent_b_sources || []);
+        setAgentASearchQueries(data.agent_a_search_queries || []);
+        setAgentBSearchQueries(data.agent_b_search_queries || []);
 
         // Add initial messages to conversation history
         const initialMessages: ChatMessage[] = [
@@ -497,6 +560,27 @@ export default function DebateArenaPage({ prompt, onBack }: DebateArenaPageProps
   const handleFollowUpQuestion = async () => {
     if (!followUpQuestion.trim() || isSendingFollowUp) return;
 
+    // Reset states at the beginning for clean transition
+    setShowVoting(false);
+    setSelectedVote(null);
+    setHoverVote(null);
+    setStreamingA(true);
+    setStreamingB(true);
+    setDisplayedA("");
+    setDisplayedB("");
+    
+    // Reset sources and search queries
+    setAgentASources([]);
+    setAgentBSources([]);
+    setAgentASearchQueries([]);
+    setAgentBSearchQueries([]);
+
+    // Store the question before clearing the input
+    const question = followUpQuestion;
+    
+    // Clear the input immediately for better UX
+    setFollowUpQuestion("");
+
     setIsSendingFollowUp(true);
     setChatLoading(true);
 
@@ -504,7 +588,7 @@ export default function DebateArenaPage({ prompt, onBack }: DebateArenaPageProps
       // Add user's follow-up question to conversation history
       const updatedHistory = [...conversationHistory, {
         role: 'user' as const,
-        content: followUpQuestion,
+        content: question,
         timestamp: new Date().toISOString()
       }];
 
@@ -548,19 +632,11 @@ export default function DebateArenaPage({ prompt, onBack }: DebateArenaPageProps
         agentB: data.agent_b_response 
       });
       
-      // Reset streaming states
-      setStreamingA(true);
-      setStreamingB(true);
-      setDisplayedA("");
-      setDisplayedB("");
-      
-      // Clear the input
-      setFollowUpQuestion("");
-      
-      // Reset voting state for new poll
-      setShowVoting(false);
-      setSelectedVote(null);
-      setHoverVote(null);
+      // Update sources and search queries
+      setAgentASources(data.agent_a_sources || []);
+      setAgentBSources(data.agent_b_sources || []);
+      setAgentASearchQueries(data.agent_a_search_queries || []);
+      setAgentBSearchQueries(data.agent_b_search_queries || []);
 
     } catch (err) {
       if (err instanceof Error) {
@@ -676,6 +752,12 @@ export default function DebateArenaPage({ prompt, onBack }: DebateArenaPageProps
           <div className="flex-1 px-4 sm:px-8"> {/* Adjusted padding */}
             <div className="max-w-xl mx-auto py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 shadow-sm dark:shadow-none">
               <p className="text-sm text-gray-600 dark:text-gray-300 truncate px-4 text-center">{prompt}</p>
+              {(agentASources.length > 0 || agentBSources.length > 0) && (
+                <div className="flex items-center justify-center gap-1 mt-1">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                  <span className="text-xs text-blue-600 dark:text-blue-400">Using real-time information</span>
+                </div>
+              )}
             </div>
           </div>
           <div className="w-9"></div> {/* Spacer to maintain layout */}
@@ -703,6 +785,8 @@ export default function DebateArenaPage({ prompt, onBack }: DebateArenaPageProps
             highlightType={cardHighlight.agentA}
             onTextToSpeech={handleTextToSpeech}
             isAudioPlaying={isAudioPlaying && currentPlayingAgent === "Pro Advocate"}
+            sources={agentASources}
+            searchQueries={agentASearchQueries}
           />
           <AssistantPanel 
             title="Con Advocate" 
@@ -714,6 +798,8 @@ export default function DebateArenaPage({ prompt, onBack }: DebateArenaPageProps
             highlightType={cardHighlight.agentB}
             onTextToSpeech={handleTextToSpeech}
             isAudioPlaying={isAudioPlaying && currentPlayingAgent === "Con Advocate"}
+            sources={agentBSources}
+            searchQueries={agentBSearchQueries}
           />
         </div>
       </main>
